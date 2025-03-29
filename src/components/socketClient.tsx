@@ -1,47 +1,23 @@
-'use Client';
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-import DayItem from "@/components/day";
-import useWebSocketConnectionHook from "@/hook/useSocket";
+'use client';
+import { TLeagueMatch, TleagueMatchList } from "@/types";
 import { get7DayRange } from "@/utils/date";
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { TLeagueMatch, TleagueMatchList } from "@/types";
-import LeagueItem from "@/components/league";
+import DayItem from "./day";
+import LeagueItem from "./league";
+import useWebSocketConnectionHook from "@/hook/useSocket";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE;
+export default function SocketClient({ initialData }: { initialData: TleagueMatchList | null }) {
 
-export async function getStaticProps() {
-    const date = new Date();
-    const dateFormat = date.toISOString().split("T")[0]
-    const res = await axios.get(`${baseUrl}?matchDate=${dateFormat}&liveOnly=false&lang=en_KH&timeZone=Asia%2FBangkok`);
-    const data = res.data;
-  
-    return {
-        props: {
-            initialData: data?.result || [],
-        },
-        revalidate: 600,
-    };
-}
-
-export default function Home({ initialData }: { initialData: TleagueMatchList }) {
-
-    const dates = useMemo(get7DayRange, []); 
-
+    const [matches, setMatches] = useState<TLeagueMatch[]>(initialData?.leagueMatchList || []);
+    const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
     const [matchDate, setMatchDate] = useState<string>(new Date().toISOString().split("T")[0]);
     const [liveOnly, setLiveOnly] = useState<boolean>(false);
-    const [matches, setMatches] = useState<TLeagueMatch[]>(initialData.leagueMatchList);
-    const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
+
+    const dates = useMemo(get7DayRange, []); 
 
     const { emitMessage } = useWebSocketConnectionHook('sendData', (data: any) => {
         setMatches(data?.data?.leagueMatchList);
     });
-
-    const requestData = (liveOnly: boolean = false, matchDate: string) => {
-        emitMessage('requestData', {
-            liveOnly, matchDate
-        });
-    }
 
     useEffect(() => {
         if (isFirstLoad) {
@@ -49,8 +25,10 @@ export default function Home({ initialData }: { initialData: TleagueMatchList })
             return;
         }
 
-        requestData(liveOnly, matchDate);
-    }, [liveOnly, matchDate]);
+        emitMessage('requestData', { liveOnly, matchDate });
+
+    }, [matchDate, liveOnly]);
+
 
     return (
         <main className="h-full min-h-screen w-full flex justify-center bg-black">
