@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { TLeagueMatch, TleagueMatchList } from "@/types";
 import { get7DayRange } from "@/utils/date";
 import { useEffect, useMemo, useState } from "react";
