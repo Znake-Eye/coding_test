@@ -1,4 +1,5 @@
 'use Client';
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import DayItem from "@/components/day";
 import useWebSocketConnectionHook from "@/hook/useSocket";
 import { get7DayRange } from "@/utils/date";
@@ -6,10 +7,10 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { TLeagueMatch, TleagueMatchList } from "@/types";
 import LeagueItem from "@/components/league";
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE;
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
     const date = new Date();
     const dateFormat = date.toISOString().split("T")[0]
     const res = await axios.get(`${baseUrl}?matchDate=${dateFormat}&liveOnly=false&lang=en_KH&timeZone=Asia%2FBangkok`);
@@ -19,6 +20,7 @@ export async function getServerSideProps() {
         props: {
             initialData: data?.result || [],
         },
+        revalidate: 600,
     };
 }
 
