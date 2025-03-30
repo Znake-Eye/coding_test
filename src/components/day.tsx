@@ -17,8 +17,8 @@ const DayItem = ({ activeDay, setActiveDay, date }: Props) => {
             onClick={() => setActiveDay(date.fullDate)}
         >
             <div className="flex flex-col items-center justify-center">
-                <h3 className="font-bold text-sm">{date.dayName}</h3>
-                <p className="text-sm">{date.day} {date.monthName}</p>
+                <h3 className="font-bold text-xs sm:text-sm">{date.dayName}</h3>
+                <p className="text-xs sm:text-sm">{date.day} {date.monthName}</p>
             </div>
         </div>
     );

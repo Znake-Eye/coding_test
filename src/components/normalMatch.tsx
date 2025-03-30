@@ -17,7 +17,7 @@ const NormalMatch = ({ match }: Props) => {
 
     return (
         <div className="flex gap-4 w-full bg-gray-700 rounded-md py-1 px-4">
-            <div className="flex gap-4 justify-between items-center w-1/6 max-w-32">
+            <div className="flex gap-1 justify-between items-center w-1/6 max-w-32">
                 <IoStarOutline className="text-2xl"/>
                 <p className="text-sm">{match?.matchStatus || ''}</p>
             </div>
